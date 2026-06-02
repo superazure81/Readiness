@@ -557,6 +557,20 @@ main {
   background: #fff;
 }
 
+.file-load-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.visually-hidden-file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .icon-btn {
   width: 34px;
   height: 34px;

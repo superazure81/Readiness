@@ -53,8 +53,8 @@
                 Milestone description
               </label>
               <button id="databaseLoadBtn" class="secondary-btn">Load</button>
-              <button id="databaseLoadFileBtn" class="secondary-btn">Load File</button>
-              <input id="databaseFileInput" type="file" accept="application/json,.json" hidden />
+              <label class="secondary-btn file-load-label" for="databaseFileInput">Load File</label>
+              <input id="databaseFileInput" class="visually-hidden-file" type="file" accept="application/json,.json" />
               <button id="databaseSaveBtn" class="primary-btn">Save</button>
               <span id="saveStatus" class="save-status" aria-live="polite"></span>
             </div>

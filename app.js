@@ -50,7 +50,6 @@ const milestoneToggle = document.querySelector("#milestoneDescriptionToggle");
 const ownerFilter = document.querySelector("#ownerFilter");
 const summaryOwnerFilter = document.querySelector("#summaryOwnerFilter");
 const loadButton = document.querySelector("#databaseLoadBtn");
-const loadFileButton = document.querySelector("#databaseLoadFileBtn");
 const databaseFileInput = document.querySelector("#databaseFileInput");
 const saveButton = document.querySelector("#databaseSaveBtn");
 const saveStatus = document.querySelector("#saveStatus");
@@ -65,7 +64,6 @@ milestoneToggle.addEventListener("change", () => {
 });
 
 loadButton.addEventListener("click", loadDatabase);
-loadFileButton.addEventListener("click", openLocalDatabaseFile);
 databaseFileInput.addEventListener("change", loadLocalDatabaseFile);
 saveButton.addEventListener("click", saveDatabase);
 exportSummaryButton.addEventListener("click", exportSummaryJpg);
