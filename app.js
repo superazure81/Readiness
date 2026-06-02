@@ -50,6 +50,7 @@ const milestoneToggle = document.querySelector("#milestoneDescriptionToggle");
 const ownerFilter = document.querySelector("#ownerFilter");
 const summaryOwnerFilter = document.querySelector("#summaryOwnerFilter");
 const loadButton = document.querySelector("#databaseLoadBtn");
+const databaseFileInput = document.querySelector("#databaseFileInput");
 const saveButton = document.querySelector("#databaseSaveBtn");
 const saveStatus = document.querySelector("#saveStatus");
 const exportSummaryButton = document.querySelector("#exportSummaryBtn");
@@ -63,6 +64,7 @@ milestoneToggle.addEventListener("change", () => {
 });
 
 loadButton.addEventListener("click", loadDatabase);
+databaseFileInput.addEventListener("change", loadLocalDatabaseFile);
 saveButton.addEventListener("click", saveDatabase);
 exportSummaryButton.addEventListener("click", exportSummaryJpg);
 document.querySelector("#addWorkstreamBtn").addEventListener("click", addWorkstream);
@@ -784,22 +786,48 @@ function monthSpans() {
 async function loadDatabase() {
   setStatus("Loading...");
   try {
-    const response = await fetch(`/database.json?ts=${Date.now()}`);
+    const response = await fetch(`database.json?ts=${Date.now()}`);
     if (!response.ok) throw new Error("Database file not found");
     const database = await response.json();
-    if (!Array.isArray(database.projects)) throw new Error("Database has no projects list");
-    projects = database.projects;
-    workstreams = Array.isArray(database.workstreams) ? database.workstreams : deriveWorkstreams(projects);
-    showMilestoneDescriptions = database.settings?.showMilestoneDescriptions ?? showMilestoneDescriptions;
-    milestoneToggle.checked = showMilestoneDescriptions;
-    saveProjects();
-    saveWorkstreams();
-    localStorage.setItem("or-gantt-show-milestone-descriptions", JSON.stringify(showMilestoneDescriptions));
-    renderAll();
+    applyDatabase(database);
     setStatus("Loaded");
   } catch {
-    setStatus("Load failed");
+    setStatus("Choose file");
+    databaseFileInput.value = "";
+    databaseFileInput.click();
   }
+}
+
+function loadLocalDatabaseFile() {
+  const file = databaseFileInput.files?.[0];
+  if (!file) {
+    setStatus("");
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const database = JSON.parse(reader.result);
+      applyDatabase(database);
+      setStatus("Loaded local");
+    } catch {
+      setStatus("Load failed");
+    }
+  };
+  reader.onerror = () => setStatus("Load failed");
+  reader.readAsText(file);
+}
+
+function applyDatabase(database) {
+  if (!Array.isArray(database.projects)) throw new Error("Database has no projects list");
+  projects = database.projects;
+  workstreams = Array.isArray(database.workstreams) ? database.workstreams : deriveWorkstreams(projects);
+  showMilestoneDescriptions = database.settings?.showMilestoneDescriptions ?? showMilestoneDescriptions;
+  milestoneToggle.checked = showMilestoneDescriptions;
+  saveProjects();
+  saveWorkstreams();
+  localStorage.setItem("or-gantt-show-milestone-descriptions", JSON.stringify(showMilestoneDescriptions));
+  renderAll();
 }
 
 function setStatus(message) {
