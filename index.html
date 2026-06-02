@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Operational Readiness Gantt</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div>
+          <h1>Operational Readiness</h1>
+          <p>Activity Timeline</p>
+        </div>
+        <nav class="tabs" aria-label="Views">
+          <button class="tab" data-view="workstreams">Workstreams</button>
+          <button class="tab active" data-view="gantt">Gantt</button>
+          <button class="tab" data-view="summary">Summary</button>
+          <button class="tab" data-view="projects">Projects</button>
+        </nav>
+      </header>
+
+      <main>
+        <section id="workstreamsView" class="view" aria-label="Workstreams list">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Workstreams</h2>
+              <button id="addWorkstreamBtn" class="primary-btn">Add Workstream</button>
+            </div>
+            <div id="workstreamsList" class="workstreams-list"></div>
+          </div>
+        </section>
+
+        <section id="ganttView" class="view active" aria-label="Gantt chart">
+          <div class="chart-toolbar">
+            <div class="brand-title">Operational Readiness - Activity Timeline</div>
+            <div class="legend">
+              <span><i class="bar-swatch"></i> Workstream</span>
+              <span><i class="diamond rag"></i> RAG Milestone</span>
+              <span><i class="diamond complete"></i> Complete Milestone</span>
+              <span><i class="slip"></i> Slipped Milestone</span>
+            </div>
+            <div class="chart-actions">
+              <label class="owner-filter-label">
+                Owner
+                <select id="ownerFilter">
+                  <option value="all">All owners</option>
+                </select>
+              </label>
+              <label class="toggle-label">
+                <input id="milestoneDescriptionToggle" type="checkbox" checked />
+                Milestone description
+              </label>
+              <button id="databaseLoadBtn" class="secondary-btn">Load</button>
+              <button id="databaseSaveBtn" class="primary-btn">Save</button>
+              <span id="saveStatus" class="save-status" aria-live="polite"></span>
+            </div>
+          </div>
+          <div class="timeline-shell">
+            <div id="ganttChart" class="gantt-chart"></div>
+          </div>
+        </section>
+
+        <section id="summaryView" class="view" aria-label="Summary report">
+          <div class="summary-toolbar">
+            <label class="owner-filter-label">
+              Owner
+              <select id="summaryOwnerFilter">
+                <option value="all">All owners</option>
+              </select>
+            </label>
+            <button id="exportSummaryBtn" class="primary-btn">Export Summary JPG</button>
+            <span id="summaryExportStatus" class="save-status" aria-live="polite"></span>
+          </div>
+          <div class="report-page">
+            <div class="report-header">
+              <h2>Operational Readiness <span>Priority Workstreams Report</span></h2>
+              <div class="status-key">
+                <span><i class="key-red"></i> Immediate attention needed</span>
+                <span><i class="key-amber"></i> Medium concern, monitor closely</span>
+                <span><i class="key-green"></i> On track</span>
+              </div>
+            </div>
+            <div id="summaryCards" class="summary-grid"></div>
+          </div>
+        </section>
+
+        <section id="projectsView" class="view" aria-label="Projects list">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Projects</h2>
+              <button id="addProjectBtn" class="primary-btn">Add Project</button>
+            </div>
+            <div class="project-table-wrap">
+              <table class="project-table">
+                <thead>
+                  <tr>
+                    <th>Workstream</th>
+                    <th>Project</th>
+                    <th>Owner</th>
+                    <th>Start</th>
+                    <th>Finish</th>
+                    <th>Status</th>
+                    <th>Updates</th>
+                  </tr>
+                </thead>
+                <tbody id="projectRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="projectModal" class="modal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="true"></div>
+      <article class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <header class="modal-head">
+          <div>
+            <h2 id="modalTitle">Project</h2>
+            <p id="modalSubtitle"></p>
+          </div>
+          <button class="icon-btn" data-close="true" aria-label="Close">×</button>
+        </header>
+
+        <div class="form-grid">
+          <label>Project name <input id="projectNameInput" type="text" /></label>
+          <label>Workstream <select id="workstreamInput"></select></label>
+          <label>Owner initials <input id="ownerInput" type="text" maxlength="3" placeholder="e.g. AB" /></label>
+          <label>Start date <input id="startInput" type="date" /></label>
+          <label>Finish date <input id="finishInput" type="date" /></label>
+          <label class="checkbox-row"><input id="ongoingInput" type="checkbox" /> Ongoing</label>
+          <label>Status
+            <select id="statusInput">
+              <option>On Target / No Concerns</option>
+              <option>Huddersfield accommodation risk</option>
+              <option>Medium concern, monitor closely</option>
+              <option>Immediate attention needed</option>
+              <option>Complete</option>
+            </select>
+          </label>
+          <label class="wide-field">Last achievement <textarea id="achievementInput" rows="3"></textarea></label>
+          <label class="wide-field">Next focus <textarea id="nextFocusInput" rows="3"></textarea></label>
+        </div>
+
+        <div class="updates-head">
+          <h3>Update rows</h3>
+          <button id="addUpdateBtn" class="secondary-btn">Add Update</button>
+        </div>
+        <div id="updatesList" class="updates-list"></div>
+
+        <footer class="modal-actions">
+          <button class="secondary-btn" data-close="true">Cancel</button>
+          <button id="saveProjectBtn" class="primary-btn">Save</button>
+        </footer>
+      </article>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
